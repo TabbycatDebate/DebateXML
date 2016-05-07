@@ -5,11 +5,18 @@ These are things that someone should be able to do with a tournament archive, no
 Tab
 ---
 * Infer the speaker, team and replies tabs (complete rankings)
-* View every ballot from the tournament
+* Infer the entire draw, including adjudicators and trainee status
+* View every ballot from the tournament, including the adjudicators and individual scores
 
 Statistics
 ----------
 * Perform statistical analyses with demographic variables, e.g. gender, region, language status
+* Perform statistical analyses with speakers, adjudicators, teams or institutions
+
+Records
+-------
+* Collate a speaker's, team's and institution's record over many tournaments
+* Generate (arbitary) ranking systems, like Elo rankings or unofficial institution rankings
 
 Motions
 -------
