@@ -27,3 +27,4 @@ Meta information
 ----------------
 * Know when the tournament was, its name, location and country
 * Know the tournament's style and language
+* Know what categories were available (language status, novice)
