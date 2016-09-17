@@ -15,6 +15,8 @@ APDA (US) | 2 teams of 2 + replies | speaks and ranks, ¼-points (no reply score
 CP (Canada) | 2 teams of 2 + replies, can merge opp 2nd/reply | speaks only, integers (no reply score), strict order | consensus, one per debate | no motions (governments run cases)
 OPD (Germany) | 2 teams of 3 + 3 unaligned speakers | _??_ | _??_ | _??_
 NPDA (US) |  _??_ | _??_ | _??_  | _??_
+[Paris V](http://www.frenchdebatingassociation.fr/debating-rules/) | 2 teams of 5 | none? | voting, one per judge | one per debate
+[FFD (Francophone)](http://www.ffdebat.org/le-debat-ffd/) | 2 teams of 4 | none? | _??_ | _??_
 
 Tournament structures
 =====================
