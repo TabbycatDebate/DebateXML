@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified"
+    vc:minVersion="1.1">
+    <xs:element name="tournament">
+        <xs:complexType>
+            <xs:all>
+                <xs:element name="round">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="debate">
+                                <xs:complexType>
+                                    <xs:choice>
+                                        <xs:element name="speech">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                  <xs:element name="ballot"/>
+                                                </xs:sequence>
+                                                <xs:attribute name="reply" type="xs:boolean"/>
+                                                <xs:attribute name="enhancements">
+                                                  <xs:simpleType>
+                                                  <xs:list itemType="xs:string"/>
+                                                  </xs:simpleType>
+                                                </xs:attribute>
+                                                <xs:attribute name="speaker"/>
+                                            </xs:complexType>
+                                            <xs:keyref name="speech_speaker" refer="speaker_name">
+                                                <xs:selector xpath="speech"/>
+                                                <xs:field xpath="speaker"/>
+                                            </xs:keyref>
+                                        </xs:element>
+                                        <xs:element name="ballot"/>
+                                    </xs:choice>
+                                    <xs:attribute name="motion"/>
+                                    <xs:attribute name="venue"/>
+                                </xs:complexType>
+                                <xs:keyref name="debate_motion" refer="motion_ref">
+                                    <xs:selector xpath="debate"/>
+                                    <xs:field xpath="motion"/>
+                                </xs:keyref>
+                                <xs:keyref name="debate_venue" refer="venue_ref">
+                                    <xs:selector xpath="debate"/>
+                                    <xs:field xpath="venue"/>
+                                </xs:keyref>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="elimination" type="xs:boolean"/>
+                        <xs:attribute name="name" type="xs:string"/>
+                        <xs:attribute name="abbreviation" type="xs:string"/>
+                        <xs:attribute name="motion"/>
+                    </xs:complexType>
+                    <xs:keyref name="round_motions" refer="motion_ref">
+                        <xs:selector xpath="round"/>
+                        <xs:field xpath="motion"/>
+                    </xs:keyref>
+                </xs:element>
+                <xs:element name="participants">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="team">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="speaker">
+                                            <xs:complexType>
+                                                <xs:attribute name="institutions"/>
+                                                <xs:attribute name="email"/>
+                                                <xs:attribute name="name"/>
+                                            </xs:complexType>
+                                            <xs:key name="speaker_name">
+                                                <xs:selector xpath="speaker"/>
+                                                <xs:field xpath="named"/>
+                                            </xs:key>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="name"/>
+                                    <xs:attribute name="reference" type="xs:string"/>
+                                    <xs:attribute name="institution"/>
+                                    <xs:attribute name="code"/>
+                                </xs:complexType>
+                                <xs:key name="team_ref">
+                                    <xs:selector xpath="team"/>
+                                    <xs:field xpath="reference"/>
+                                </xs:key>
+                            </xs:element>
+                            <xs:element name="adjudicator">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="feedback">
+                                            <xs:complexType>
+                                                <xs:attribute name="source-team"/>
+                                                <xs:attribute name="source-adjudicator"/>
+                                            </xs:complexType>
+                                            <xs:keyref name="feedback_source-team" refer="team_ref">
+                                                <xs:selector xpath="feedback"/>
+                                                <xs:field xpath="source-team"/>
+                                            </xs:keyref>
+                                            <xs:keyref name="feedback_source-adj" refer="adj_name">
+                                                <xs:selector xpath="feedback"/>
+                                                <xs:field xpath="source-adjudicator"/>
+                                            </xs:keyref>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="institutions"/>
+                                    <xs:attribute name="current-institution"/>
+                                    <xs:attribute name="name"/>
+                                    <xs:attribute name="score" type="xs:decimal"/>
+                                    <xs:attribute name="core" type="xs:boolean"/>
+                                    <xs:attribute name="independant" type="xs:boolean"/>
+                                </xs:complexType>
+                                <xs:key name="adj_name">
+                                    <xs:selector xpath="adjudicator"/>
+                                    <xs:field xpath="name"/>
+                                </xs:key>
+                                <xs:keyref name="adjudicator_current-institution"
+                                    refer="institution_ref">
+                                    <xs:selector xpath="adjudicator"/>
+                                    <xs:field xpath="current-institution"/>
+                                </xs:keyref>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:all>
+            <xs:attribute name="name"/>
+            <xs:attribute name="format"/>
+            <xs:attribute name="start-date"/>
+            <xs:attribute name="end-date"/>
+            <xs:attribute name="host"/>
+        </xs:complexType>
+        <xs:keyref name="tournament_host" refer="institution_ref">
+            <xs:selector xpath="tournament"/>
+            <xs:field xpath="host"/>
+        </xs:keyref>
+    </xs:element>
+    <xs:element name="motion">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="info-slide"/>
+                <xs:element name="resolution"/>
+            </xs:sequence>
+            <xs:attribute name="reference"/>
+        </xs:complexType>
+        <xs:key name="motion_ref">
+            <xs:selector xpath="motion"/>
+            <xs:field xpath="reference"/>
+        </xs:key>
+    </xs:element>
+    <xs:element name="institution">
+        <xs:complexType>
+            <xs:attribute name="reference"/>
+            <xs:attribute name="name"/>
+        </xs:complexType>
+        <xs:key name="institution_ref">
+            <xs:selector xpath="institution"/>
+            <xs:field xpath="reference"/>
+        </xs:key>
+    </xs:element>
+    <xs:element name="venues">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="venue-category">
+                    <xs:complexType>
+                        <xs:attribute name="reference"/>
+                    </xs:complexType>
+                    <xs:key name="venue-category_ref">
+                        <xs:selector xpath="venue-category"/>
+                        <xs:field xpath="reference"/>
+                    </xs:key>
+                </xs:element>
+                <xs:element name="venue">
+                    <xs:complexType>
+                        <xs:attribute name="reference"/>
+                        <xs:attribute name="categories" use="required"/>
+                    </xs:complexType>
+                    <xs:key name="venue_ref">
+                        <xs:selector xpath="venue"/>
+                        <xs:field xpath="reference"/>
+                    </xs:key>
+                    <xs:keyref name="venue_categories" refer="venue-category_ref">
+                        <xs:selector xpath="venue"/>
+                        <xs:field xpath="categories"/>
+                    </xs:keyref>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
