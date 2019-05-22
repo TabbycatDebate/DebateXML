@@ -1,235 +1,210 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" elementFormDefault="qualified"
-    vc:minVersion="1.1">
-    <xs:element name="tournament">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Tournaments are the core of the data collected as part of debates.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:all>
-                <xs:element name="participants">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en">Container element for competitive participants for clarity of the contents of the parent element.</xs:documentation>
-                    </xs:annotation>
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="team">
-                                <xs:annotation>
-                                    <xs:documentation xml:lang="en">Teams are groups of speakers normally associated with a specific institution. In addition to ranking team members, teams are also ranked, which may determine eligibility in elimination rounds.</xs:documentation>
-                                </xs:annotation>
-                                <xs:complexType>
-                                    <xs:sequence>
-                                        <xs:element ref="speaker"/>
-                                    </xs:sequence>
-                                    <xs:attribute name="name"/>
-                                    <xs:attribute name="reference"/>
-                                    <xs:attribute name="institution"/>
-                                    <xs:attribute name="code"/>
-                                </xs:complexType>
-                                <xs:key name="team_ref">
-                                    <xs:selector xpath="team"/>
-                                    <xs:field xpath="reference"/>
-                                </xs:key>
-                            </xs:element>
-                            <xs:element name="adjudicator">
-                                <xs:annotation>
-                                    <xs:documentation>While an adjudicator can participate in many tournaments, their status (as indpendent, core, etc.) can vary, and so they must stay attached.</xs:documentation>
-                                </xs:annotation>
-                                <xs:complexType>
-                                    <xs:sequence>
-                                        <xs:element name="feedback">
-                                            <xs:annotation>
-                                                <xs:documentation>Feedback is submitted towards adjudicators to comment on their competence in certain respects, depending on their role and who is submitting feedback. The parent element should be the adjudicator receiving the feedback.</xs:documentation>
-                                            </xs:annotation>
-                                            <xs:complexType>
-                                                <xs:attribute name="source-team"/>
-                                                <xs:attribute name="source-adjudicator"/>
-                                                <xs:attribute name="score"/>
-                                            </xs:complexType>
-                                            <xs:keyref name="feedback_source-team" refer="team_ref">
-                                                <xs:selector xpath="feedback"/>
-                                                <xs:field xpath="source-team"/>
-                                            </xs:keyref>
-                                            <xs:keyref name="feedback_source-adj" refer="adj_name">
-                                                <xs:selector xpath="feedback"/>
-                                                <xs:field xpath="source-adjudicator"/>
-                                            </xs:keyref>
-                                        </xs:element>
-                                    </xs:sequence>
-                                    <xs:attribute name="institutions"/>
-                                    <xs:attribute name="current-institution"/>
-                                    <xs:attribute name="name"/>
-                                    <xs:attribute name="score" type="xs:decimal"/>
-                                    <xs:attribute name="core" type="xs:boolean"/>
-                                    <xs:attribute name="independant" type="xs:boolean"/>
-                                    <xs:attribute name="gender"/>
-                                </xs:complexType>
-                                <xs:key name="adj_name">
-                                    <xs:selector xpath="adjudicator"/>
-                                    <xs:field xpath="name"/>
-                                </xs:key>
-                                <xs:keyref name="adjudicator_current-institution"
-                                    refer="institution_ref">
-                                    <xs:selector xpath="adjudicator"/>
-                                    <xs:field xpath="current-institution"/>
-                                </xs:keyref>
-                            </xs:element>
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
-                <xs:element name="round">
-                    <xs:annotation>
-                        <xs:documentation xml:lang="en">A round is a collection of debates, which may have similarities in time or stage in the tournament.</xs:documentation>
-                    </xs:annotation>
-                    <xs:complexType>
-                        <xs:sequence>
-                            <xs:element name="debate">
-                                <xs:annotation>
-                                    <xs:documentation>Debates are collections of speeches between competitors which are compared to form a score/result.</xs:documentation>
-                                </xs:annotation>
-                                <xs:complexType>
-                                    <xs:choice>
-                                        <xs:element name="speech">
-                                            <xs:annotation>
-                                                <xs:documentation xml:lang="en">Each debate is comprised of speeches by members of each opposing team. These speeches may be scores individually or grouped by team. As each speech has a speaker, the team (if any) can be inferred.
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="tournament">
+		<xs:annotation>
+			<xs:documentation>Tournaments are the core of the data collected as part of debates.</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element name="round">
+				<xs:annotation>
+					<xs:documentation>A round is a collection of debates, which may have similarities in time or stage in the tournament.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="debate">
+							<xs:annotation>
+								<xs:documentation>Debates are collections of speeches between competitors which are compared to form a score/result.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="side">
+										<xs:annotation>
+											<xs:documentation>Opposing speeches are often grouped as sides to a debate, with each team representing a position.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="ballot" type="xs:string">
+													<xs:annotation>
+														<xs:documentation>A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator.</xs:documentation>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:attribute name="adjudicators" type="xs:IDREFS"/>
+														<xs:attribute default="false" name="minority" type="xs:boolean"/>
+													</xs:complexType>
+													<xs:attribute name="rank" type="xs:integer" use="optional"/>
+													<xs:keyref name="team_ballot_adjudicators" refer="adjudicator_id"/>
+												</xs:element>
+												<xs:element name="speech">
+													<xs:annotation>
+														<xs:documentation>Each debate is comprised of speeches by members of each opposing team. These speeches may be scores individually or grouped by team. As each speech has a speaker, the team (if any) can be inferred.
 
 Duplicate speeches (iron-man) should show as a separate speech.</xs:documentation>
-                                            </xs:annotation>
-                                            <xs:complexType>
-                                                <xs:sequence>
-                                                  <xs:element ref="ballot"/>
-                                                </xs:sequence>
-                                                <xs:attribute name="reply" type="xs:boolean"/>
-                                                <xs:attribute name="enhancements">
-                                                  <xs:simpleType>
-                                                  <xs:list itemType="xs:string"/>
-                                                  </xs:simpleType>
-                                                </xs:attribute>
-                                                <xs:attribute name="speaker"/>
-                                            </xs:complexType>
-                                            <xs:keyref name="speech_speaker" refer="speaker_name">
-                                                <xs:selector xpath="speech"/>
-                                                <xs:field xpath="speaker"/>
-                                            </xs:keyref>
-                                        </xs:element>
-                                        <xs:element ref="ballot"/>
-                                    </xs:choice>
-                                    <xs:attribute name="motion"/>
-                                    <xs:attribute name="venue"/>
-                                </xs:complexType>
-                                <xs:keyref name="debate_motion" refer="motion_ref">
-                                    <xs:selector xpath="debate"/>
-                                    <xs:field xpath="motion"/>
-                                </xs:keyref>
-                                <xs:keyref name="debate_venue" refer="venue_ref">
-                                    <xs:selector xpath="debate"/>
-                                    <xs:field xpath="venue"/>
-                                </xs:keyref>
-                            </xs:element>
-                        </xs:sequence>
-                        <xs:attribute name="elimination" type="xs:boolean"/>
-                        <xs:attribute name="name" type="xs:string"/>
-                        <xs:attribute name="abbreviation" type="xs:string"/>
-                        <xs:attribute name="motion"/>
-                    </xs:complexType>
-                    <xs:keyref name="round_motions" refer="motion_ref">
-                        <xs:selector xpath="round"/>
-                        <xs:field xpath="motion"/>
-                    </xs:keyref>
-                </xs:element>
-            </xs:all>
-            <xs:attribute name="name"/>
-            <xs:attribute name="format"/>
-            <xs:attribute name="start-date"/>
-            <xs:attribute name="end-date"/>
-            <xs:attribute name="host"/>
-        </xs:complexType>
-        <xs:keyref name="tournament_host" refer="institution_ref">
-            <xs:selector xpath="tournament"/>
-            <xs:field xpath="host"/>
-        </xs:keyref>
-    </xs:element>
-    <xs:element abstract="true" name="ballot">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="adjudicators"/>
-            <xs:attribute name="minority" type="xs:boolean"/>
-            <xs:attribute name="score"/>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="motion">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Motions are not exclusive to a tournament, and so have been set apart. Rounds and debates may reference them.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="reference"/>
-            <xs:attribute name="info-slide"/>
-            <xs:attribute name="resolution"/>
-        </xs:complexType>
-        <xs:key name="motion_ref">
-            <xs:selector xpath="motion"/>
-            <xs:field xpath="reference"/>
-        </xs:key>
-    </xs:element>
-    <xs:element name="institution">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Institutions represent collections of individuals with a shared debating history. This means that members are more familiar with each-other and so judging within is to be avoided. All participants may have affiliations, and teams may be categorized by their institution.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="reference"/>
-            <xs:attribute name="name"/>
-            <xs:attribute name="region"/>
-        </xs:complexType>
-        <xs:key name="institution_ref">
-            <xs:selector xpath="institution"/>
-            <xs:field xpath="reference"/>
-        </xs:key>
-    </xs:element>
-    <xs:element name="venue">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Venues are where debates may take place. Specific attributes that a venue has should be added as a venue-category and referenced.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="reference"/>
-            <xs:attribute name="categories"/>
-        </xs:complexType>
-        <xs:key name="venue_ref">
-            <xs:selector xpath="venue"/>
-            <xs:field xpath="reference"/>
-        </xs:key>
-        <xs:keyref name="venue_categories" refer="venue-category_ref">
-            <xs:selector xpath="venue"/>
-            <xs:field xpath="categories"/>
-        </xs:keyref>
-    </xs:element>
-    <xs:element name="venue-category">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Venue categories are a simple reference element to designate venues with a similarity, such as being easily accessible.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="reference"/>
-        </xs:complexType>
-        <xs:key name="venue-category_ref">
-            <xs:selector xpath="venue-category"/>
-            <xs:field xpath="reference"/>
-        </xs:key>
-    </xs:element>
-    <xs:element name="speaker">
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Speakers are represented without anything tournament-specific, but are most-often grouped as teams. If teams are non-existant, they may be declared outside the tournament-type.</xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-            <xs:attribute name="institutions"/>
-            <xs:attribute name="email"/>
-            <xs:attribute name="name"/>
-            <xs:attribute name="gender"/>
-        </xs:complexType>
-        <xs:key name="speaker_name">
-            <xs:selector xpath="speaker"/>
-            <xs:field xpath="named"/>
-        </xs:key>
-    </xs:element>
+													</xs:annotation>
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="ballot" type="xs:decimal">
+																<xs:annotation>
+																	<xs:documentation>A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator.</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:attribute name="adjudicators" type="xs:IDREFS"/>
+																</xs:complexType>
+																<xs:keyref name="speech_ballot_adjudicators" refer="adjudicator_id"/>
+															</xs:element>
+														</xs:sequence>
+														<xs:attribute name="speaker" type="xs:IDREF"/>
+														<xs:attribute name="reply" type="xs:boolean"/>
+													</xs:complexType>
+													<xs:keyref name="speech_speaker" refer="speaker_id"/>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="team" type="xs:IDREF"/>
+										</xs:complexType>
+										<xs:keyref name="side_team" refer="team_id"/>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="id" type="xs:ID"/>
+								<xs:attribute name="chair" type="xs:IDREF" use="optional"/>
+								<xs:attribute name="venue" type="xs:IDREF" use="optional"/>
+								<xs:attribute name="motion" type="xs:IDREF"/>
+							</xs:complexType>
+							<xs:attribute name="adjudicators" type="xs:IDREFS"/>
+							<xs:key name="debate_id"/>
+							<xs:keyref name="debate_chair_adjudicator" refer="adjudicator_id"/>
+							<xs:keyref name="debate_venue" refer="debate_venue"/>
+							<xs:keyref name="debate_motion" refer="debate_motion"/>
+							<xs:keyref name="debate_adjudicators" refer="adjudicator_id"/>
+						</xs:element>
+					</xs:sequence>
+					<xs:attribute name="name" type="xs:string"/>
+					<xs:attribute name="elimination" type="xs:boolean"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="participants">
+				<xs:annotation>
+					<xs:documentation>Container element for competitive participants for clarity of the contents of the parent element.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="team">
+							<xs:annotation>
+								<xs:documentation>Teams are groups of speakers normally associated with a specific institution. In addition to ranking team members, teams are also ranked, which may determine eligibility in elimination rounds.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="speaker" type="xs:string">
+										<xs:annotation>
+											<xs:documentation>Speakers are represented without anything tournament-specific, but are most-often grouped as teams. If teams are non-existant, they may be declared outside the tournament-type.</xs:documentation>
+										</xs:annotation>
+										<xs:complexType>
+											<xs:attribute name="id" type="xs:ID"/>
+											<xs:attribute name="institution" type="xs:IDREF"/>
+										</xs:complexType>
+										<xs:key name="speaker_id"/>
+										<xs:keyref name="speaker_institution" refer="institution_id"/>
+									</xs:element>
+								</xs:sequence>
+								<xs:attribute name="id" type="xs:ID"/>
+								<xs:attribute name="code" type="xs:string"/>
+								<xs:attribute name="short" type="xs:string"/>
+								<xs:attribute name="name" type="xs:string"/>
+							</xs:complexType>
+							<xs:key name="team_id"/>
+						</xs:element>
+						<xs:element name="adjudicator" type="xs:string">
+							<xs:annotation>
+								<xs:documentation>While an adjudicator can participate in many tournaments, their status (as indpendent, core, etc.) can vary, and so they must stay attached.</xs:documentation>
+							</xs:annotation>
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element name="feedback">
+										<xs:complexType>
+											<xs:sequence>
+												<xs:element name="answer" type="xs:string">
+													<xs:complexType>
+														<xs:attribute name="question" type="xs:IDREF"/>
+													</xs:complexType>
+													<xs:keyref name="answer_question" refer="question_id"/>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="source-team" type="xs:IDREF" use="optional"/>
+											<xs:attribute name="source-adjudicator" type="xs:IDREF" use="optional"/>
+											<xs:attribute name="debate" type="xs:IDREF"/>
+											<xs:attribute name="score" type="xs:decimal"/>
+										</xs:complexType>
+										<xs:keyref name="feedback_source_team" refer="team_id"/>
+										<xs:keyref name="feedback_source_adj" refer="adjudicator_id"/>
+										<xs:keyref name="feedback_debate" refer="debate_id"/>
+									</xs:element>
+								</xs:sequence>
+							</xs:complexType>
+							<xs:attribute name="id" type="xs:ID"/>
+							<xs:attribute name="name" type="xs:string"/>
+							<xs:attribute name="core" type="xs:boolean"/>
+							<xs:attribute name="independent" type="xs:boolean"/>
+							<xs:key name="adjudicator_ref"/>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="institution" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Institutions represent collections of individuals with a shared debating history. This means that members are more familiar with each-other and so judging within is to be avoided. All participants may have affiliations, and teams may be categorized by their institution.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:ID"/>
+					<xs:attribute name="reference" type="xs:string"/>
+				</xs:complexType>
+				<xs:key name="institution_id"/>
+			</xs:element>
+			<xs:element name="motion" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Motions are not exclusive to a tournament, and so have been set apart. Rounds and debates may reference them.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="info-slide" type="xs:string"/>
+					</xs:sequence>
+					<xs:attribute name="id" type="xs:ID" use="required"/>
+					<xs:attribute name="reference"/>
+				</xs:complexType>
+				<xs:key name="motion_id"/>
+			</xs:element>
+			<xs:element name="venue" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Venues are where debates may take place. Specific attributes that a venue has should be added as a venue-category and referenced.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:ID" use="required"/>
+					<xs:attribute name="categories" use="optional">
+						<xs:annotation>
+							<xs:documentation>Venue categories are a simple reference element to designate venues with a similarity, such as being easily accessible.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:key name="venue_id"/>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="question" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>A question posed to participant(s) of each debate on an adjudicator.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:attribute name="id" type="xs:ID"/>
+					<xs:attribute name="name" type="xs:string"/>
+					<xs:attribute name="type" type="xs:string">
+						<xs:annotation>
+							<xs:documentation>Type can be one of the following: bc for checkbox, bs for yes/no (dropdown), i for integer (textbox), is for integer scale, f for float, t for text, tl for long text, ss for select one, ms for select multiple</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="from-teams" type="xs:boolean"/>
+					<xs:attribute name="from-adjudicators" type="xs:boolean"/>
+				</xs:complexType>
+				<xs:key name="question_id"/>
+			</xs:element>
+		</xs:sequence>
+		<xs:complexType>
+			<xs:attribute name="name" type="xs:string"/>
+		</xs:complexType>
+	</xs:element>
 </xs:schema>
