@@ -50,9 +50,19 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 															<xs:sequence>
 																<xs:element name="ballot">
 																	<xs:annotation>
-																		<xs:documentation>A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator. The score should be its content.</xs:documentation>
+																		<xs:documentation>A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator. The score should be its content, with criteria if applicable.</xs:documentation>
 																	</xs:annotation>
 																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="score">
+																				<xs:annotation>
+																					<xs:documentation>One of the scores given for the speech in relation to a marking rubric. The score is the content.</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:attribute name="criterion" type="xs:string"/>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
 																		<xs:attribute name="adjudicators" type="xs:IDREFS"/>
 																		<xs:attribute name="rank" type="xs:integer" use="optional"/>
 																	</xs:complexType>
