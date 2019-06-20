@@ -297,6 +297,9 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 						<xs:documentation>A question posed to participant(s) of each debate on an adjudicator. The text of the question should be its content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="choice"/>
+						</xs:sequence>
 						<xs:attribute name="id" type="xs:ID"/>
 						<xs:attribute name="name" type="xs:string"/>
 						<xs:attribute name="type" type="xs:string">
@@ -306,11 +309,6 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 						</xs:attribute>
 						<xs:attribute name="from-teams" type="xs:boolean"/>
 						<xs:attribute name="from-adjudicators" type="xs:boolean"/>
-						<xs:attribute name="choices" type="xs:string" use="optional">
-							<xs:annotation>
-								<xs:documentation>Separate using pipes (&quot;|&quot;). Only use if type is of a choice.</xs:documentation>
-							</xs:annotation>
-						</xs:attribute>
 					</xs:complexType>
 					<xs:key name="question_id">
 						<xs:selector xpath="question"/>
