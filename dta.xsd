@@ -7,70 +7,32 @@
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="round">
+				<xs:element name="round" maxOccurs="unbounded">
 					<xs:annotation>
 						<xs:documentation>A round is a collection of debates, which may have similarities in time or stage in the tournament.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="debate">
+							<xs:element name="debate" maxOccurs="unbounded">
 								<xs:annotation>
 									<xs:documentation>Debates are collections of speeches between competitors which are compared to form a score/result. Byes are represented by having only one side to a debate.</xs:documentation>
 								</xs:annotation>
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element name="side">
+										<xs:element name="side" minOccurs="2" maxOccurs="4">
 											<xs:annotation>
 												<xs:documentation>Opposing speeches are often grouped as sides to a debate, with each team representing a position.</xs:documentation>
 											</xs:annotation>
 											<xs:complexType>
 												<xs:sequence>
-													<xs:element name="ballot">
+													<xs:element ref="ballot" minOccurs="1" maxOccurs="unbounded"/>
+													<xs:element name="speech" minOccurs="0" maxOccurs="10">
 														<xs:annotation>
-															<xs:documentation>A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator. The score, or whether the team advanced (true/false), should be its content. Win or lose should be determined by comparing the rank or the score of all sides of the debate.</xs:documentation>
-														</xs:annotation>
-														<xs:complexType>
-															<xs:attribute name="adjudicators" type="xs:IDREFS"/>
-															<xs:attribute default="false" name="minority" type="xs:boolean"/>
-															<xs:attribute name="rank" type="xs:integer" use="optional"/>
-															<xs:attribute default="false" name="ignored" type="xs:boolean" use="optional"/>
-														</xs:complexType>
-														<xs:keyref name="team_ballot_adjudicators" refer="adjudicator_id">
-															<xs:selector xpath="side/ballot"/>
-															<xs:field xpath="@adjudicators"/>
-														</xs:keyref>
-													</xs:element>
-													<xs:element name="speech">
-														<xs:annotation>
-															<xs:documentation>Each debate is comprised of speeches by members of each opposing team. These speeches may be scores individually or grouped by team. As each speech has a speaker, the team (if any) can be inferred.
-
-Duplicate speeches (iron-man) should show as a separate speech.</xs:documentation>
+															<xs:documentation>Each debate is comprised of speeches by members of each opposing team. These speeches may be scores individually or grouped by team. As each speech has a speaker, the team (if any) can be inferred. Duplicate speeches (iron-man) should show as a separate speech.</xs:documentation>
 														</xs:annotation>
 														<xs:complexType>
 															<xs:sequence>
-																<xs:element name="ballot">
-																	<xs:annotation>
-																		<xs:documentation>A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator. The score should be its content, with criteria if applicable.</xs:documentation>
-																	</xs:annotation>
-																	<xs:complexType>
-																		<xs:sequence>
-																			<xs:element name="score">
-																				<xs:annotation>
-																					<xs:documentation>One of the scores given for the speech in relation to a marking rubric. The score is the content.</xs:documentation>
-																				</xs:annotation>
-																				<xs:complexType>
-																					<xs:attribute name="criterion" type="xs:string"/>
-																				</xs:complexType>
-																			</xs:element>
-																		</xs:sequence>
-																		<xs:attribute name="adjudicators" type="xs:IDREFS"/>
-																		<xs:attribute name="rank" type="xs:integer" use="optional"/>
-																	</xs:complexType>
-																	<xs:keyref name="speech_ballot_adjudicators" refer="adjudicator_id">
-																		<xs:selector xpath="speech/ballot"/>
-																		<xs:field xpath="@adjudicators"/>
-																	</xs:keyref>
-																</xs:element>
+																<xs:element ref="ballot" minOccurs="0" maxOccurs="unbounded"/>
 															</xs:sequence>
 															<xs:attribute name="speaker" type="xs:IDREF"/>
 															<xs:attribute name="reply" type="xs:boolean"/>
@@ -135,21 +97,22 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
-							<xs:element name="team">
+							<xs:element name="team" minOccurs="2" maxOccurs="unbounded">
 								<xs:annotation>
 									<xs:documentation>Teams are groups of speakers normally associated with a specific institution. In addition to ranking team members, teams are also ranked, which may determine eligibility in elimination rounds.</xs:documentation>
 								</xs:annotation>
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element name="speaker">
+										<xs:element name="speaker" minOccurs="0" maxOccurs="10">
 											<xs:annotation>
 												<xs:documentation>Speakers are represented without anything tournament-specific, but are most-often grouped as teams. If teams are non-existant, they may be declared outside the tournament-type. Their name should be the content of the element.</xs:documentation>
 											</xs:annotation>
 											<xs:complexType>
-												<xs:attribute name="id" type="xs:ID"/>
-												<xs:attribute name="gender" type="xs:string" use="optional"/>
-												<xs:attribute name="institutions" type="xs:IDREFS"/>
-												<xs:attribute name="categories" type="xs:IDREFS"/>
+												<xs:complexContent>
+													<xs:extension base="person">
+														<xs:attribute name="categories" type="xs:IDREFS"/>
+													</xs:extension>
+												</xs:complexContent>
 											</xs:complexType>
 											<xs:key name="speaker_id">
 												<xs:selector xpath="speaker"/>
@@ -157,7 +120,7 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 											</xs:key>
 											<xs:keyref name="speaker_institution" refer="institution_id">
 												<xs:selector xpath="speaker"/>
-												<xs:field xpath="@institution"/>
+												<xs:field xpath="@institutions"/>
 											</xs:keyref>
 											<xs:keyref name="speaker_categories" refer="speaker_category_id">
 												<xs:selector xpath="speaker"/>
@@ -179,54 +142,58 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 									<xs:field xpath="@break-eligibilities"/>
 								</xs:keyref>
 							</xs:element>
-							<xs:element name="adjudicator">
+							<xs:element name="adjudicator" minOccurs="1" maxOccurs="unbounded">
 								<xs:annotation>
 									<xs:documentation>While an adjudicator can participate in many tournaments, their status (as indpendent, core, etc.) can vary, and so they must stay attached.</xs:documentation>
 								</xs:annotation>
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element name="feedback">
-											<xs:complexType>
-												<xs:sequence>
-													<xs:element name="answer">
-														<xs:annotation>
-															<xs:documentation>The content should be the answer given.</xs:documentation>
-														</xs:annotation>
-														<xs:complexType>
-															<xs:attribute name="question" type="xs:IDREF"/>
-														</xs:complexType>
-														<xs:keyref name="answer_question" refer="question_id">
-															<xs:selector xpath="answer"/>
-															<xs:field xpath="@question"/>
-														</xs:keyref>
-													</xs:element>
-												</xs:sequence>
-												<xs:attribute name="source-team" type="xs:IDREF" use="optional"/>
-												<xs:attribute name="source-adjudicator" type="xs:IDREF" use="optional"/>
-												<xs:attribute name="debate" type="xs:IDREF"/>
-												<xs:attribute name="score" type="xs:decimal"/>
-											</xs:complexType>
-											<xs:keyref name="feedback_source_team" refer="team_id">
-												<xs:selector xpath="feedback"/>
-												<xs:field xpath="@source-team"/>
-											</xs:keyref>
-											<xs:keyref name="feedback_source_adj" refer="adjudicator_id">
-												<xs:selector xpath="feedback"/>
-												<xs:field xpath="@source-adjudicator"/>
-											</xs:keyref>
-											<xs:keyref name="feedback_debate" refer="debate_id">
-												<xs:selector xpath="feedback"/>
-												<xs:field xpath="@debate"/>
-											</xs:keyref>
-										</xs:element>
-									</xs:sequence>
-									<xs:attribute name="gender" type="xs:string" use="optional"/>
-									<xs:attribute name="id" type="xs:ID"/>
-									<xs:attribute name="name" type="xs:string"/>
-									<xs:attribute name="core" type="xs:boolean"/>
-									<xs:attribute name="independent" type="xs:boolean"/>
-									<xs:attribute default="0.0" name="score" type="xs:float" use="optional"/>
-									<xs:attribute name="institutions" type="xs:IDREFS"/>
+								<xs:complexType mixed="true">
+									<xs:complexContent>
+										<xs:extension base="person">
+											<xs:sequence>
+												<xs:element name="feedback" minOccurs="0" maxOccurs="unbounded">
+													<xs:complexType>
+														<xs:sequence>
+															<xs:element name="answer" minOccurs="0" maxOccurs="unbounded">
+																<xs:annotation>
+																	<xs:documentation>The content should be the answer given.</xs:documentation>
+																</xs:annotation>
+																<xs:complexType>
+																	<xs:simpleContent>
+																		<xs:extension base="xs:string">
+																			<xs:attribute name="question" type="xs:IDREF"/>
+																		</xs:extension>
+																	</xs:simpleContent>
+																</xs:complexType>
+																<xs:keyref name="answer_question" refer="question_id">
+																	<xs:selector xpath="answer"/>
+																	<xs:field xpath="@question"/>
+																</xs:keyref>
+															</xs:element>
+														</xs:sequence>
+														<xs:attribute name="source-team" type="xs:IDREF" use="optional"/>
+														<xs:attribute name="source-adjudicator" type="xs:IDREF" use="optional"/>
+														<xs:attribute name="debate" type="xs:IDREF"/>
+														<xs:attribute name="score" type="xs:decimal"/>
+													</xs:complexType>
+													<xs:keyref name="feedback_source_team" refer="team_id">
+														<xs:selector xpath="feedback"/>
+														<xs:field xpath="@source-team"/>
+													</xs:keyref>
+													<xs:keyref name="feedback_source_adj" refer="adjudicator_id">
+														<xs:selector xpath="feedback"/>
+														<xs:field xpath="@source-adjudicator"/>
+													</xs:keyref>
+													<xs:keyref name="feedback_debate" refer="debate_id">
+														<xs:selector xpath="feedback"/>
+														<xs:field xpath="@debate"/>
+													</xs:keyref>
+												</xs:element>
+											</xs:sequence>
+											<xs:attribute name="core" type="xs:boolean"/>
+											<xs:attribute name="independent" type="xs:boolean"/>
+											<xs:attribute default="0.0" name="score" type="xs:float" use="optional"/>
+										</xs:extension>
+									</xs:complexContent>
 								</xs:complexType>
 								<xs:key name="adjudicator_id">
 									<xs:selector xpath="adjudicator"/>
@@ -240,26 +207,30 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="institution">
+				<xs:element name="institution" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
 						<xs:documentation>Institutions represent collections of individuals with a shared debating history. This means that members are more familiar with each-other and so judging within is to be avoided. All participants may have affiliations, and teams may be categorized by their institution. Its name should be the content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="id" type="xs:ID"/>
-						<xs:attribute name="reference" type="xs:string"/>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="id" type="xs:ID"/>
+								<xs:attribute name="reference" type="xs:string"/>
+							</xs:extension>
+						</xs:simpleContent>
 					</xs:complexType>
 					<xs:key name="institution_id">
 						<xs:selector xpath="institution"/>
 						<xs:field xpath="@id"/>
 					</xs:key>
 				</xs:element>
-				<xs:element name="motion">
+				<xs:element name="motion" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
 						<xs:documentation>Motions are not exclusive to a tournament, and so have been set apart. Rounds and debates may reference them. The resolution should be the non-element content of the tag.</xs:documentation>
 					</xs:annotation>
-					<xs:complexType>
+					<xs:complexType mixed="true">
 						<xs:sequence>
-							<xs:element name="info-slide" type="xs:string"/>
+							<xs:element name="info-slide" type="xs:string" minOccurs="0" maxOccurs="1"/>
 						</xs:sequence>
 						<xs:attribute name="id" type="xs:ID" use="required"/>
 						<xs:attribute name="reference"/>
@@ -274,31 +245,35 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 						<xs:field xpath="@id"/>
 					</xs:key>
 				</xs:element>
-				<xs:element name="venue">
+				<xs:element name="venue" minOccurs="1" maxOccurs="unbounded">
 					<xs:annotation>
 						<xs:documentation>Venues are where debates may take place. Specific attributes that a venue has should be added as a venue-category and referenced. Its name, excluding category suffixes, should be the content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="id" type="xs:ID" use="required"/>
-						<xs:attribute name="categories" use="optional">
-							<xs:annotation>
-								<xs:documentation>Venue categories are a simple reference element to designate venues with a similarity, such as being easily accessible.</xs:documentation>
-							</xs:annotation>
-						</xs:attribute>
-						<xs:attribute name="score" type="xs:float" use="optional"/>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="id" type="xs:ID" use="required"/>
+								<xs:attribute name="categories" use="optional">
+									<xs:annotation>
+										<xs:documentation>Venue categories are a simple reference element to designate venues with a similarity, such as being easily accessible.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
+								<xs:attribute name="score" type="xs:float" use="optional"/>
+							</xs:extension>
+						</xs:simpleContent>
 					</xs:complexType>
 					<xs:key name="venue_id">
 						<xs:selector xpath="venue"/>
 						<xs:field xpath="@id"/>
 					</xs:key>
 				</xs:element>
-				<xs:element name="question">
+				<xs:element name="question" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
 						<xs:documentation>A question posed to participant(s) of each debate on an adjudicator. The text of the question should be its content.</xs:documentation>
 					</xs:annotation>
-					<xs:complexType>
+					<xs:complexType mixed="true">
 						<xs:sequence>
-							<xs:element name="choice"/>
+							<xs:element name="choice" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
 						</xs:sequence>
 						<xs:attribute name="id" type="xs:ID"/>
 						<xs:attribute name="name" type="xs:string"/>
@@ -315,22 +290,30 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 						<xs:field xpath="@id"/>
 					</xs:key>
 				</xs:element>
-				<xs:element name="break-category">
+				<xs:element name="break-category" minOccurs="0" maxOccurs="10">
 					<xs:annotation>
 						<xs:documentation>A break category. Its name should be the content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="id" type="xs:ID"/>
-						<xs:attribute name="priority" type="xs:decimal"/>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="id" type="xs:ID"/>
+								<xs:attribute name="priority" type="xs:decimal"/>
+							</xs:extension>
+						</xs:simpleContent>
 					</xs:complexType>
 					<xs:key name="break_category_id">
 						<xs:selector xpath="break-category"/>
 						<xs:field xpath="@id"/>
 					</xs:key>
 				</xs:element>
-				<xs:element name="speaker-category">
+				<xs:element name="speaker-category" minOccurs="0" maxOccurs="unbounded">
 					<xs:complexType>
-						<xs:attribute name="id" type="xs:ID"/>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="id" type="xs:ID"/>
+							</xs:extension>
+						</xs:simpleContent>
 					</xs:complexType>
 					<xs:key name="speaker_category_id">
 						<xs:selector xpath="speaker-category"/>
@@ -347,4 +330,43 @@ Duplicate speeches (iron-man) should show as a separate speech.</xs:documentatio
 			<xs:attribute name="end-date" type="xs:date" use="optional"/>
 		</xs:complexType>
 	</xs:element>
+	<xs:element name="ballot">
+		<xs:annotation>
+			<xs:documentation>A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator. The score, or whether the team advanced (true/false), should be its content. Win or lose should be determined by comparing the rank or the score of all sides of the debate. Please note that it is not the collection of scores by the same adjudicator. The score should be its content, using criteria subelements if applicable.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType mixed="true">
+			<xs:sequence>
+				<xs:element name="score" minOccurs="0" maxOccurs="unbounded">
+					<xs:annotation>
+						<xs:documentation>One of the scores given for the speech in relation to a marking rubric. The score is the content.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:attribute name="criterion" type="xs:string"/>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+			<xs:attribute name="adjudicators" type="xs:IDREFS"/>
+			<xs:attribute default="false" name="minority" type="xs:boolean"/>
+			<xs:attribute name="rank" type="xs:integer" use="optional"/>
+			<xs:attribute default="false" name="ignored" type="xs:boolean" use="optional"/>
+		</xs:complexType>
+		<xs:keyref name="ballot_adjudicators" refer="adjudicator_id">
+			<xs:selector xpath="ballot"/>
+			<xs:field xpath="@adjudicators"/>
+		</xs:keyref>
+	</xs:element>
+	<xs:complexType name="person" mixed="true">
+		<xs:attribute name="id" type="xs:ID"/>
+		<xs:attribute name="gender" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="m"/>
+					<xs:enumeration value="f"/>
+					<xs:enumeration value="o"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="institutions" type="xs:IDREFS"/>
+		<xs:attribute name="name" type="xs:string" use="optional"/>
+	</xs:complexType>
 </xs:schema>
