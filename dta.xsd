@@ -3,39 +3,39 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:element name="tournament">
 		<xs:annotation>
-			<xs:documentation>Tournaments are the core of the data collected as part of debates.</xs:documentation>
+			<xs:documentation xml:lang="en">Tournaments are the core of the data collected as part of debates.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType>
 			<xs:sequence>
 				<xs:element name="round" maxOccurs="unbounded">
 					<xs:annotation>
-						<xs:documentation>A round is a collection of debates, which may have similarities in time or stage in the tournament.</xs:documentation>
+						<xs:documentation xml:lang="en">A round is a collection of debates, which may have similarities in time or stage in the tournament.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="debate" maxOccurs="unbounded">
 								<xs:annotation>
-									<xs:documentation>Debates are collections of speeches between competitors which are compared to form a score/result. Byes are represented by having only one side to a debate.</xs:documentation>
+									<xs:documentation xml:lang="en">Debates are collections of speeches between competitors which are compared to form a score/result. Byes are represented by having only one side to a debate.</xs:documentation>
 								</xs:annotation>
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="side" minOccurs="2" maxOccurs="4">
 											<xs:annotation>
-												<xs:documentation>Opposing speeches are often grouped as sides to a debate, with each team representing a position.</xs:documentation>
+												<xs:documentation xml:lang="en">Opposing speeches are often grouped as sides to a debate, with each team representing a position.</xs:documentation>
 											</xs:annotation>
 											<xs:complexType>
 												<xs:sequence>
 													<xs:element ref="ballot" minOccurs="1" maxOccurs="unbounded"/>
 													<xs:element name="speech" minOccurs="0" maxOccurs="10">
 														<xs:annotation>
-															<xs:documentation>Each debate is comprised of speeches by members of each opposing team. These speeches may be scores individually or grouped by team. As each speech has a speaker, the team (if any) can be inferred. Duplicate speeches (iron-man) should show as a separate speech.</xs:documentation>
+															<xs:documentation xml:lang="en">Each debate is comprised of speeches by members of each opposing team. These speeches may be scores individually or grouped by team. As each speech has a speaker, the team (if any) can be inferred. Duplicate speeches (iron-man) should show as a separate speech.</xs:documentation>
 														</xs:annotation>
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element ref="ballot" minOccurs="0" maxOccurs="unbounded"/>
 															</xs:sequence>
 															<xs:attribute name="speaker" type="xs:IDREF"/>
-															<xs:attribute name="reply" type="xs:boolean"/>
+															<xs:attribute name="reply" type="xs:boolean" default="false"/>
 														</xs:complexType>
 														<xs:keyref name="speech_speaker" refer="speaker_id">
 															<xs:selector xpath="speech"/>
@@ -45,10 +45,15 @@
 												</xs:sequence>
 												<xs:attribute name="team" type="xs:IDREF"/>
 												<xs:attribute name="forfeit" type="xs:boolean" use="optional" default="false"/>
+												<xs:attribute name="motion-veto" type="xs:IDREF" use="optional"/>
 											</xs:complexType>
 											<xs:keyref name="side_team" refer="team_id">
 												<xs:selector xpath="side"/>
 												<xs:field xpath="@team"/>
+											</xs:keyref>
+											<xs:keyref name="side_veto" refer="motion_id">
+												<xs:selector xpath="side"/>
+												<xs:field xpath="@motion-veto"/>
 											</xs:keyref>
 										</xs:element>
 									</xs:sequence>
@@ -56,7 +61,11 @@
 									<xs:attribute name="chair" type="xs:IDREF" use="optional"/>
 									<xs:attribute name="venue" type="xs:IDREF" use="optional"/>
 									<xs:attribute name="motion" type="xs:IDREF"/>
-									<xs:attribute name="adjudicators" type="xs:IDREFS"/>
+									<xs:attribute name="adjudicators" type="xs:IDREFS">
+										<xs:annotation>
+											<xs:documentation xml:lang="en">The first adjudicator listed will be considered the chair if no chair explicitly specified.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
 								</xs:complexType>
 								<xs:key name="debate_id">
 									<xs:selector xpath="debate"/>
@@ -79,6 +88,15 @@
 									<xs:field xpath="@adjudicators"/>
 								</xs:keyref>
 							</xs:element>
+							<xs:element name="bye" minOccurs="0" type="xs:IDREF" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation xml:lang="en">A bye is where a debate could not be held due to a lack of teams as not all of the assigned teams to the debate are present. The ID of the present team should be the content.</xs:documentation>
+								</xs:annotation>
+								<xs:keyref name="bye_team" refer="team_id">
+									<xs:selector xpath="bye"/>
+									<xs:field xpath="."/>
+								</xs:keyref>
+							</xs:element>
 						</xs:sequence>
 						<xs:attribute name="name" type="xs:string"/>
 						<xs:attribute default="false" name="elimination" type="xs:boolean"/>
@@ -93,19 +111,19 @@
 				</xs:element>
 				<xs:element name="participants">
 					<xs:annotation>
-						<xs:documentation>Container element for competitive participants for clarity of the contents of the parent element.</xs:documentation>
+						<xs:documentation xml:lang="en">Container element for competitive participants for clarity of the contents of the parent element.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="team" minOccurs="2" maxOccurs="unbounded">
 								<xs:annotation>
-									<xs:documentation>Teams are groups of speakers normally associated with a specific institution. In addition to ranking team members, teams are also ranked, which may determine eligibility in elimination rounds.</xs:documentation>
+									<xs:documentation xml:lang="en">Teams are groups of speakers normally associated with a specific institution. In addition to ranking team members, teams are also ranked, which may determine eligibility in elimination rounds.</xs:documentation>
 								</xs:annotation>
 								<xs:complexType>
 									<xs:sequence>
 										<xs:element name="speaker" minOccurs="0" maxOccurs="10">
 											<xs:annotation>
-												<xs:documentation>Speakers are represented without anything tournament-specific, but are most-often grouped as teams. If teams are non-existant, they may be declared outside the tournament-type. Their name should be the content of the element.</xs:documentation>
+												<xs:documentation xml:lang="en">Speakers are represented without anything tournament-specific, but are most-often grouped as teams. If teams are non-existant, they may be declared outside the tournament-type. Their name should be the content of the element.</xs:documentation>
 											</xs:annotation>
 											<xs:complexType>
 												<xs:complexContent>
@@ -144,7 +162,7 @@
 							</xs:element>
 							<xs:element name="adjudicator" minOccurs="1" maxOccurs="unbounded">
 								<xs:annotation>
-									<xs:documentation>While an adjudicator can participate in many tournaments, their status (as indpendent, core, etc.) can vary, and so they must stay attached.</xs:documentation>
+									<xs:documentation xml:lang="en">While an adjudicator can participate in many tournaments, their status (as indpendent, core, etc.) can vary, and so they must stay attached.</xs:documentation>
 								</xs:annotation>
 								<xs:complexType mixed="true">
 									<xs:complexContent>
@@ -155,7 +173,7 @@
 														<xs:sequence>
 															<xs:element name="answer" minOccurs="0" maxOccurs="unbounded">
 																<xs:annotation>
-																	<xs:documentation>The content should be the answer given.</xs:documentation>
+																	<xs:documentation xml:lang="en">The content should be the answer given.</xs:documentation>
 																</xs:annotation>
 																<xs:complexType>
 																	<xs:simpleContent>
@@ -209,7 +227,7 @@
 				</xs:element>
 				<xs:element name="institution" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
-						<xs:documentation>Institutions represent collections of individuals with a shared debating history. This means that members are more familiar with each-other and so judging within is to be avoided. All participants may have affiliations, and teams may be categorized by their institution. Its name should be the content.</xs:documentation>
+						<xs:documentation xml:lang="en">Institutions represent collections of individuals with a shared debating history. This means that members are more familiar with each-other and so judging within is to be avoided. All participants may have affiliations, and teams may be categorized by their institution. Its name should be the content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
 						<xs:simpleContent>
@@ -226,19 +244,20 @@
 				</xs:element>
 				<xs:element name="motion" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
-						<xs:documentation>Motions are not exclusive to a tournament, and so have been set apart. Rounds and debates may reference them. The resolution should be the non-element content of the tag.</xs:documentation>
+						<xs:documentation xml:lang="en">Motions are not exclusive to a tournament, and so have been set apart. Rounds and debates may reference them. The resolution should be the non-element content of the tag.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType mixed="true">
 						<xs:sequence>
 							<xs:element name="info-slide" type="xs:string" minOccurs="0" maxOccurs="1"/>
 						</xs:sequence>
 						<xs:attribute name="id" type="xs:ID" use="required"/>
-						<xs:attribute name="reference"/>
+						<xs:attribute name="reference" type="xs:string"/>
 						<xs:attribute name="language" type="xs:string" use="optional">
 							<xs:annotation>
-								<xs:documentation>The language(s) of the motion/the debates using the motion. Use ISO 639 codes, separated by whitespace.</xs:documentation>
+								<xs:documentation xml:lang="en">The language(s) of the motion/the debates using the motion. Use ISO 639 codes, separated by whitespace.</xs:documentation>
 							</xs:annotation>
 						</xs:attribute>
+						<xs:attribute name="contentious" type="xs:boolean" default="false" use="optional"/>
 					</xs:complexType>
 					<xs:key name="motion_id">
 						<xs:selector xpath="motion"/>
@@ -247,7 +266,7 @@
 				</xs:element>
 				<xs:element name="venue" minOccurs="1" maxOccurs="unbounded">
 					<xs:annotation>
-						<xs:documentation>Venues are where debates may take place. Specific attributes that a venue has should be added as a venue-category and referenced. Its name, excluding category suffixes, should be the content.</xs:documentation>
+						<xs:documentation xml:lang="en">Venues are where debates may take place. Specific attributes that a venue has should be added as a venue-category and referenced. Its name, excluding category suffixes, should be the content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
 						<xs:simpleContent>
@@ -255,7 +274,7 @@
 								<xs:attribute name="id" type="xs:ID" use="required"/>
 								<xs:attribute name="categories" use="optional">
 									<xs:annotation>
-										<xs:documentation>Venue categories are a simple reference element to designate venues with a similarity, such as being easily accessible.</xs:documentation>
+										<xs:documentation xml:lang="en">Venue categories are a simple reference element to designate venues with a similarity, such as being easily accessible.</xs:documentation>
 									</xs:annotation>
 								</xs:attribute>
 								<xs:attribute name="score" type="xs:float" use="optional"/>
@@ -269,7 +288,7 @@
 				</xs:element>
 				<xs:element name="question" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
-						<xs:documentation>A question posed to participant(s) of each debate on an adjudicator. The text of the question should be its content.</xs:documentation>
+						<xs:documentation xml:lang="en">A question posed to participant(s) of each debate on an adjudicator. The text of the question should be its content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType mixed="true">
 						<xs:sequence>
@@ -277,10 +296,23 @@
 						</xs:sequence>
 						<xs:attribute name="id" type="xs:ID"/>
 						<xs:attribute name="name" type="xs:string"/>
-						<xs:attribute name="type" type="xs:string">
+						<xs:attribute name="type">
 							<xs:annotation>
-								<xs:documentation>Type can be one of the following: bc for checkbox, bs for yes/no (dropdown), i for integer (textbox), is for integer scale, f for float, t for text, tl for long text, ss for select one, ms for select multiple</xs:documentation>
+								<xs:documentation xml:lang="en">Type can be one of the following: bc for checkbox, bs for yes/no (dropdown), i for integer (textbox), is for integer scale, f for float, t for text, tl for long text, ss for select one, ms for select multiple</xs:documentation>
 							</xs:annotation>
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:enumeration value="bc"/>
+									<xs:enumeration value="bs"/>
+									<xs:enumeration value="i"/>
+									<xs:enumeration value="is"/>
+									<xs:enumeration value="f"/>
+									<xs:enumeration value="t"/>
+									<xs:enumeration value="tl"/>
+									<xs:enumeration value="ss"/>
+									<xs:enumeration value="ms"/>
+								</xs:restriction>
+							</xs:simpleType>
 						</xs:attribute>
 						<xs:attribute name="from-teams" type="xs:boolean"/>
 						<xs:attribute name="from-adjudicators" type="xs:boolean"/>
@@ -292,7 +324,7 @@
 				</xs:element>
 				<xs:element name="break-category" minOccurs="0" maxOccurs="10">
 					<xs:annotation>
-						<xs:documentation>A break category. Its name should be the content.</xs:documentation>
+						<xs:documentation xml:lang="en">A break category. Its name should be the content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
 						<xs:simpleContent>
@@ -324,24 +356,57 @@
 			<xs:attribute name="name" type="xs:string"/>
 			<xs:attribute name="short" type="xs:string" use="optional"/>
 			<xs:attribute name="host" type="xs:string" use="optional"/>
-			<xs:attribute name="style" type="xs:string" use="optional"/>
-			<xs:attribute name="language" type="xs:string" use="optional"/>
+			<xs:attribute name="style" use="optional">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">An enumeration of many standardized tournament formats: apda for American Parliamentary Debate Association, asians for Asian Parliamentary Debate, aus-easters for Australian Easters, australs for Australs, bp for British Parliamentary, cndc for Canadian National Debating Championships, cp for Canadian Parliamentary, ffd for Fédération Francophone de Débat, joynt for Joynt Scroll, ld for Lincoln–Douglas, npda for National Parliamentary Debate Association, nz-easters for New Zealand Easters, opd for Offene parlamentarische Debatte, paris-v for Paris V, uadc for United Asians Debating Championships, wadl for Western Australian Debating League, and wsdc for World Schools Debating Championships.</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:enumeration value="apda"/>
+						<xs:enumeration value="asians"/>
+						<xs:enumeration value="aus-easters"/>
+						<xs:enumeration value="australs"/>
+						<xs:enumeration value="bp"/>
+						<xs:enumeration value="cndc"/>
+						<xs:enumeration value="cp"/>
+						<xs:enumeration value="ffd"/>
+						<xs:enumeration value="joynt"/>
+						<xs:enumeration value="ld"/>
+						<xs:enumeration value="npda"/>
+						<xs:enumeration value="nz-easters"/>
+						<xs:enumeration value="opd"/>
+						<xs:enumeration value="paris-v"/>
+						<xs:enumeration value="uadc"/>
+						<xs:enumeration value="wadl"/>
+						<xs:enumeration value="wsdc"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute name="language" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">Please use ISO 639 codes.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
 			<xs:attribute name="start-date" type="xs:date" use="optional"/>
 			<xs:attribute name="end-date" type="xs:date" use="optional"/>
 		</xs:complexType>
 	</xs:element>
 	<xs:element name="ballot">
 		<xs:annotation>
-			<xs:documentation>A ballot is an atomic score/result given by adjudicators towards a team or speaker and not the collection of scores by the same adjudicator. The score, or whether the team advanced (true/false), should be its content. Win or lose should be determined by comparing the rank or the score of all sides of the debate. Please note that it is not the collection of scores by the same adjudicator. The score should be its content, using criteria subelements if applicable.</xs:documentation>
+			<xs:documentation xml:lang="en">A ballot is an atomic score/result given by one or more adjudicators towards a team or speaker and not the collection of scores by the same adjudicator. The score, or whether the team advanced (true/false), should be its content. Win or lose should be determined by comparing the rank or the score of all sides of the debate. Please note that it is not the collection of scores by the same adjudicator. The score should be its content, using criteria subelements if applicable.</xs:documentation>
 		</xs:annotation>
 		<xs:complexType mixed="true">
 			<xs:sequence>
 				<xs:element name="score" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
-						<xs:documentation>One of the scores given for the speech in relation to a marking rubric. The score is the content.</xs:documentation>
+						<xs:documentation xml:lang="en">One of the scores given for the speech in relation to a marking rubric. The score is the content.</xs:documentation>
 					</xs:annotation>
 					<xs:complexType>
-						<xs:attribute name="criterion" type="xs:string"/>
+						<xs:simpleContent>
+							<xs:extension base="xs:decimal">
+								<xs:attribute name="criterion" type="xs:string"/>
+							</xs:extension>
+						</xs:simpleContent>
 					</xs:complexType>
 				</xs:element>
 			</xs:sequence>
@@ -358,6 +423,9 @@
 	<xs:complexType name="person" mixed="true">
 		<xs:attribute name="id" type="xs:ID"/>
 		<xs:attribute name="gender" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">m for male, f for female, and o for other.</xs:documentation>
+			</xs:annotation>
 			<xs:simpleType>
 				<xs:restriction base="xs:string">
 					<xs:enumeration value="m"/>
