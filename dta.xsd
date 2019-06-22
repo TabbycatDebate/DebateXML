@@ -60,10 +60,10 @@
 									<xs:attribute name="id" type="xs:ID"/>
 									<xs:attribute name="chair" type="xs:IDREF" use="optional"/>
 									<xs:attribute name="venue" type="xs:IDREF" use="optional"/>
-									<xs:attribute name="motion" type="xs:IDREF"/>
+									<xs:attribute name="motion" type="xs:IDREF" use="optional"/>
 									<xs:attribute name="adjudicators" type="xs:IDREFS">
 										<xs:annotation>
-											<xs:documentation xml:lang="en">The first adjudicator listed will be considered the chair if no chair explicitly specified.</xs:documentation>
+											<xs:documentation xml:lang="en">The first adjudicator listed will be considered the chair if no chair explicitly specified. Also include adjudicators who did not participate in scoring (trainees).</xs:documentation>
 										</xs:annotation>
 									</xs:attribute>
 								</xs:complexType>
@@ -150,6 +150,12 @@
 									<xs:attribute name="code" type="xs:string"/>
 									<xs:attribute name="name" type="xs:string"/>
 									<xs:attribute name="break-eligibilities" type="xs:IDREFS"/>
+									<xs:attribute name="division" type="xs:IDREF" use="optional"/>
+									<xs:attribute name="swing" type="xs:boolean" default="false">
+										<xs:annotation>
+											<xs:documentation xml:lang="en">Swing teams are ineligible for breaks. They are normally formed when there are not enough eligible teams.</xs:documentation>
+										</xs:annotation>
+									</xs:attribute>
 								</xs:complexType>
 								<xs:key name="team_id">
 									<xs:selector xpath="team"/>
@@ -158,6 +164,10 @@
 								<xs:keyref name="team_break_categories" refer="break_category_id">
 									<xs:selector xpath="team"/>
 									<xs:field xpath="@break-eligibilities"/>
+								</xs:keyref>
+								<xs:keyref name="team_division" refer="division_id">
+									<xs:selector xpath="team"/>
+									<xs:field xpath="@division"/>
 								</xs:keyref>
 							</xs:element>
 							<xs:element name="adjudicator" minOccurs="1" maxOccurs="unbounded">
@@ -278,6 +288,7 @@
 									</xs:annotation>
 								</xs:attribute>
 								<xs:attribute name="score" type="xs:float" use="optional"/>
+								<xs:attribute name="division" type="xs:IDREF" use="optional"/>
 							</xs:extension>
 						</xs:simpleContent>
 					</xs:complexType>
@@ -285,6 +296,10 @@
 						<xs:selector xpath="venue"/>
 						<xs:field xpath="@id"/>
 					</xs:key>
+					<xs:keyref name="venue_division" refer="division_id">
+						<xs:selector xpath="venue"/>
+						<xs:field xpath="@division"/>
+					</xs:keyref>
 				</xs:element>
 				<xs:element name="question" minOccurs="0" maxOccurs="unbounded">
 					<xs:annotation>
@@ -352,10 +367,30 @@
 						<xs:field xpath="@id"/>
 					</xs:key>
 				</xs:element>
+				<xs:element name="division" minOccurs="0" maxOccurs="5">
+					<xs:annotation>
+						<xs:documentation xml:lang="en">Divisions are groupings of teams that compete amongst themselves, but within the same tournament as teams in different divisions. Its name should be its content.</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="id" type="xs:ID"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:key name="division_id">
+						<xs:selector xpath="division"/>
+						<xs:field xpath="@id"/>
+					</xs:key>
+				</xs:element>
 			</xs:sequence>
 			<xs:attribute name="name" type="xs:string"/>
 			<xs:attribute name="short" type="xs:string" use="optional"/>
-			<xs:attribute name="host" type="xs:string" use="optional"/>
+			<xs:attribute name="host" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation xml:lang="en">The organizing institution(s). Nominally a string-type, could contain IDREFS towards institutions.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
 			<xs:attribute name="style" use="optional">
 				<xs:annotation>
 					<xs:documentation xml:lang="en">An enumeration of many standardized tournament formats: apda for American Parliamentary Debate Association, asians for Asian Parliamentary Debate, aus-easters for Australian Easters, australs for Australs, bp for British Parliamentary, cndc for Canadian National Debating Championships, cp for Canadian Parliamentary, ffd for Fédération Francophone de Débat, joynt for Joynt Scroll, ld for Lincoln–Douglas, npda for National Parliamentary Debate Association, nz-easters for New Zealand Easters, opd for Offene parlamentarische Debatte, paris-v for Paris V, uadc for United Asians Debating Championships, wadl for Western Australian Debating League, and wsdc for World Schools Debating Championships.</xs:documentation>
