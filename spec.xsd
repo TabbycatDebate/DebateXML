@@ -33,6 +33,7 @@
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element ref="ballot" minOccurs="0" maxOccurs="unbounded"/>
+																<xs:element ref="intervention" minOccurs="0" maxOccurs="unbounded"/>
 															</xs:sequence>
 															<xs:attribute name="speaker" type="xs:IDREF"/>
 															<xs:attribute name="reply" type="xs:boolean" default="false"/>
@@ -472,4 +473,30 @@
 		<xs:attribute name="institutions" type="xs:IDREFS"/>
 		<xs:attribute name="name" type="xs:string" use="optional"/>
 	</xs:complexType>
+	<xs:element name="intervention">
+		<xs:annotation>
+			<xs:documentation xml:lang="en">An intervention is when another speaker proposes the current speaker to hear from them, such as for a point of information.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute name="speaker" type="xs:IDREF"/>
+					<xs:attribute name="request" default="information">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="information"/>
+								<xs:enumeration value="privilege"/>
+								<xs:enumeration value="clarification"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+					<xs:attribute name="accepted" type="xs:boolean" default="true"/>
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+		<xs:keyref name="intervention_speaker" refer="speaker_id">
+			<xs:selector xpath="intervention"/>
+			<xs:field xpath="@speaker"/>
+		</xs:keyref>
+	</xs:element>
 </xs:schema>
