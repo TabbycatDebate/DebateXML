@@ -37,6 +37,7 @@
 															</xs:sequence>
 															<xs:attribute name="speaker" type="xs:IDREF"/>
 															<xs:attribute name="reply" type="xs:boolean" default="false"/>
+															<xs:attribute name="length" type="xs:duration" use="optional"/>
 														</xs:complexType>
 														<xs:keyref name="speech_speaker" refer="speaker_id">
 															<xs:selector xpath="speech"/>
@@ -491,6 +492,12 @@
 						</xs:simpleType>
 					</xs:attribute>
 					<xs:attribute name="accepted" type="xs:boolean" default="true"/>
+					<xs:attribute name="start" type="xs:duration" use="optional">
+						<xs:annotation>
+							<xs:documentation xml:lang="en">The start of the intervention (or request) relative to the beginning of the speech.</xs:documentation>
+						</xs:annotation>
+					</xs:attribute>
+					<xs:attribute name="length" type="xs:duration" use="optional"/>
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
