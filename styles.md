@@ -10,7 +10,7 @@ Australs | 2 teams of 3 + replies | speaks only, integers (½ for replies), stri
 Australian Easters | 2 teams of 3 | speaks only, integers (½ for replies), strict order | voting, one per judge, average over majority | three per round, teams choose
 NZ Easters | 2 teams of 2 + replies | speaks only, integers (½ for replies), strict order | voting, one per judge, average over majority | two per round, teams choose
 NZ Joynt | 2 teams of 3 + replies | speaks only, integers (½ for replies), strict order | voting, one per judge, average over majority | one per round
-Asians | 2 teams of 3 + replies | _??_ | _??_ | _??_ 
+Asians | 2 teams of 3 + replies | speaks only, integers (½ for replies), strict order | voting, one per judge, average over majority | three per round, teams choose
 APDA (US) | 2 teams of 2 + replies | speaks and ranks, integers (no reply score), tied-speaks tied-rank wins allowed | varies from tournament to tournament | no motions at most tournaments (governments run cases), a few per year have motions
 CP (Canada) | 2 teams of 2 + replies, can merge opp 2nd/reply | speaks only, integers (no reply score), strict order | consensus, one per debate | no motions for English (governments run cases), but may be provided. French have one per debate
 OPD (Germany) | 2 teams of 3 + 3 unaligned speakers | _??_ | _??_ | _??_
