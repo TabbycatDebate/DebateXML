@@ -105,11 +105,16 @@
 						<xs:attribute name="feedback-weight" type="xs:float" use="optional"/>
 						<xs:attribute name="break-category" type="xs:IDREF" use="optional"/>
 						<xs:attribute name="start" type="xs:dateTime" use="optional"/>
+						<xs:attribute name="division" type="xs:IDREF" use="optional"/>
 						<xs:attribute name="flight" type="xs:integer" use="optional" default="1"/>
 					</xs:complexType>
 					<xs:keyref name="round_break_category" refer="break_category_id">
 						<xs:selector xpath="round"/>
 						<xs:field xpath="@break-category"/>
+					</xs:keyref>
+					<xs:keyref name="round_division" refer="division_id">
+						<xs:selector xpath="round"/>
+						<xs:field xpath="@division"/>
 					</xs:keyref>
 				</xs:element>
 				<xs:element name="participants">
@@ -378,6 +383,7 @@
 						<xs:simpleContent>
 							<xs:extension base="xs:string">
 								<xs:attribute name="id" type="xs:ID"/>
+								<xs:attributeGroup ref="styles"/>
 							</xs:extension>
 						</xs:simpleContent>
 					</xs:complexType>
@@ -394,37 +400,7 @@
 					<xs:documentation xml:lang="en">The organizing institution(s). Nominally a string-type, could contain IDREFS towards institutions.</xs:documentation>
 				</xs:annotation>
 			</xs:attribute>
-			<xs:attribute name="style" use="optional">
-				<xs:annotation>
-					<xs:documentation xml:lang="en">An enumeration of many standardized tournament formats: apda for American Parliamentary Debate Association, asians for Asian Parliamentary Debate, aus-easters for Australian Easters, australs for Australs, bp for British Parliamentary, cndc for Canadian National Debating Championships, cp for Canadian Parliamentary, ffd for Fédération Francophone de Débat, joynt for Joynt Scroll, ld for Lincoln–Douglas, npda for National Parliamentary Debate Association, nz-easters for New Zealand Easters, opd for Offene parlamentarische Debatte, paris-v for Paris V, uadc for United Asians Debating Championships, wadl for Western Australian Debating League, and wsdc for World Schools Debating Championships.</xs:documentation>
-				</xs:annotation>
-				<xs:simpleType>
-					<xs:restriction base="xs:string">
-						<xs:enumeration value="apda"/>
-						<xs:enumeration value="asians"/>
-						<xs:enumeration value="aus-easters"/>
-						<xs:enumeration value="australs"/>
-						<xs:enumeration value="bp"/>
-						<xs:enumeration value="cndc"/>
-						<xs:enumeration value="cp"/>
-						<xs:enumeration value="ffd"/>
-						<xs:enumeration value="joynt"/>
-						<xs:enumeration value="ld"/>
-						<xs:enumeration value="npda"/>
-						<xs:enumeration value="nz-easters"/>
-						<xs:enumeration value="opd"/>
-						<xs:enumeration value="paris-v"/>
-						<xs:enumeration value="uadc"/>
-						<xs:enumeration value="wadl"/>
-						<xs:enumeration value="wsdc"/>
-					</xs:restriction>
-				</xs:simpleType>
-			</xs:attribute>
-			<xs:attribute name="language" type="xs:string" use="optional">
-				<xs:annotation>
-					<xs:documentation xml:lang="en">Please use ISO 639 codes.</xs:documentation>
-				</xs:annotation>
-			</xs:attribute>
+			<xs:attributeGroup ref="styles"/>
 			<xs:attribute name="start-date" type="xs:date" use="optional"/>
 			<xs:attribute name="end-date" type="xs:date" use="optional"/>
 		</xs:complexType>
@@ -507,4 +483,37 @@
 			<xs:field xpath="@speaker"/>
 		</xs:keyref>
 	</xs:element>
+	<xs:attributeGroup name="styles">
+		<xs:attribute name="style" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">An enumeration of many standardized tournament formats: apda for American Parliamentary Debate Association, asians for Asian Parliamentary Debate, aus-easters for Australian Easters, australs for Australs, bp for British Parliamentary, cndc for Canadian National Debating Championships, cp for Canadian Parliamentary, ffd for Fédération Francophone de Débat, joynt for Joynt Scroll, ld for Lincoln–Douglas, npda for National Parliamentary Debate Association, nz-easters for New Zealand Easters, opd for Offene parlamentarische Debatte, paris-v for Paris V, uadc for United Asians Debating Championships, wadl for Western Australian Debating League, and wsdc for World Schools Debating Championships.</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="apda"/>
+					<xs:enumeration value="asians"/>
+					<xs:enumeration value="aus-easters"/>
+					<xs:enumeration value="australs"/>
+					<xs:enumeration value="bp"/>
+					<xs:enumeration value="cndc"/>
+					<xs:enumeration value="cp"/>
+					<xs:enumeration value="ffd"/>
+					<xs:enumeration value="joynt"/>
+					<xs:enumeration value="ld"/>
+					<xs:enumeration value="npda"/>
+					<xs:enumeration value="nz-easters"/>
+					<xs:enumeration value="opd"/>
+					<xs:enumeration value="paris-v"/>
+					<xs:enumeration value="uadc"/>
+					<xs:enumeration value="wadl"/>
+					<xs:enumeration value="wsdc"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="language" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation xml:lang="en">Please use ISO 639 codes.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:attributeGroup>
 </xs:schema>
