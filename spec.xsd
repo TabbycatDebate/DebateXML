@@ -104,7 +104,7 @@
 						<xs:attribute default="false" name="elimination" type="xs:boolean"/>
 						<xs:attribute name="feedback-weight" type="xs:float" use="optional"/>
 						<xs:attribute name="break-category" type="xs:IDREF" use="optional"/>
-						<xs:attribute name="start" type="xs:time" use="optional"/>
+						<xs:attribute name="start" type="xs:dateTime" use="optional"/>
 						<xs:attribute name="flight" type="xs:integer" use="optional" default="1"/>
 					</xs:complexType>
 					<xs:keyref name="round_break_category" refer="break_category_id">
