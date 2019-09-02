@@ -297,6 +297,11 @@
 								</xs:attribute>
 								<xs:attribute name="score" type="xs:float" use="optional"/>
 								<xs:attribute name="division" type="xs:IDREF" use="optional"/>
+								<xs:attribute name="priority" type="xs:decimal" use="optional" default="0">
+									<xs:annotation>
+										<xs:documentation xml:lang="en">The priority of a venue is a value indicating whether this venue should be preferred over another. Lower scores are not preferred.</xs:documentation>
+									</xs:annotation>
+								</xs:attribute>
 							</xs:extension>
 						</xs:simpleContent>
 					</xs:complexType>
