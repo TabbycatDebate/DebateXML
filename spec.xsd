@@ -228,6 +228,8 @@
 											<xs:attribute name="core" type="xs:boolean"/>
 											<xs:attribute name="independent" type="xs:boolean"/>
 											<xs:attribute default="0.0" name="score" type="xs:float" use="optional"/>
+											<xs:attribute name="team-conflicts" type="xs:IDREFS" use="optional"/>
+											<xs:attribute name="adjudicator-conflicts" type="xs:IDREFS" use="optional"/>
 										</xs:extension>
 									</xs:complexContent>
 								</xs:complexType>
@@ -238,6 +240,14 @@
 								<xs:keyref name="adjudicator_institutions" refer="institution_id">
 									<xs:selector xpath="adjudicator"/>
 									<xs:field xpath="@institutions"/>
+								</xs:keyref>
+								<xs:keyref name="adjudicator_team_conflicts" refer="team_id">
+									<xs:selector xpath="adjudicator"/>
+									<xs:field xpath="@team-conflicts"/>
+								</xs:keyref>
+								<xs:keyref name="adjudicator_adj_conflicts" refer="adjudicator_id">
+									<xs:selector xpath="adjudicator"/>
+									<xs:field xpath="@adjudicator-conflicts"/>
 								</xs:keyref>
 							</xs:element>
 						</xs:sequence>
@@ -455,6 +465,7 @@
 		</xs:attribute>
 		<xs:attribute name="institutions" type="xs:IDREFS"/>
 		<xs:attribute name="name" type="xs:string" use="optional"/>
+		<xs:attribute name="email" type="xs:string" use="optional"/>
 	</xs:complexType>
 	<xs:element name="intervention">
 		<xs:annotation>
